@@ -178,6 +178,7 @@ int main( int argc, char * argv[] )
   printf("Average distance found is %lf\n", distance );
   printf("Minimum distance found is %lf\n", min );
   printf("Maximum distance found is %lf\n", max );
+  printf("test.\n");
 
   return 0;
 }
