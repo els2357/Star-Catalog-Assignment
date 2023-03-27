@@ -196,7 +196,7 @@ int main( int argc, char * argv[] )
   struct thread_id *thread_ids = malloc(threads * sizeof(struct thread_id));
   for (int i = 0; i < threads; i++)
   {
-        thread_ids[i].id = i;
+    thread_ids[i].id = i;
   }
 
   //Create and initialize the mutex
@@ -204,16 +204,16 @@ int main( int argc, char * argv[] )
   if (valid) printf("pthread_mutex_init failed");
   
   //Create threads
-  for (int t = 0; t < threads; t++)
+  for (int i = 0; i < threads; i++)
   {
-    valid = pthread_create( &thread_array[t], NULL, determineAverageAngularDistance, &thread_ids[t]);
+    valid = pthread_create( &thread_array[i], NULL, determineAverageAngularDistance, &thread_ids[t]);
     if (valid) printf("pthread_create failed");
   }
   
   //Join threads
-  for (int t = 0; t < threads; t++)
+  for (int i = 0; i < threads; i++)
   {
-    valid = pthread_join(thread_array[t], NULL);
+    valid = pthread_join(thread_array[i], NULL);
     if (valid) printf("pthread_join failed");
   }
   
