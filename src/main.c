@@ -68,13 +68,23 @@ void *determineAverageAngularDistance( void *args )
   struct star_arg *my_star_args = (struct star_arg *)args;
   int id = my_star_args->id;
   struct Star *mystar = my_star_args->sa;
+  int start, end;
 
   uint32_t i, j;
 
   int num_sections = NUM_STARS/threads;
-  int start = num_sections * id;
-  int end = num_sections * (id + 1);
+  if (id == 0)
+  {
+    start = num_sections * id;
+  }
+  else 
+  {
+    start = (num_sections * id) + 1;
+  }
 
+  end = num_sections * (id + 1);
+
+  printf("Slice Size = %d, Thread id = %d, Start = %d, End = %d\n", num_sections, id, start, end);
   for (i = start; i < end; i++)
   {
     for (j = 0; j < NUM_STARS; j++)
@@ -83,6 +93,11 @@ void *determineAverageAngularDistance( void *args )
       {
         double distance = calculateAngularDistance( mystar[i].RightAscension, mystar[j].Declination,
                                                     mystar[j].RightAscension, mystar[j].Declination ) ;
+        pthread_mutex_lock(&mutex);
+        count++;
+        mean = mean + (distance-mean)/count;
+        pthread_mutex_unlock(&mutex);
+        
         distance_calculated[i][j] = 1;
         distance_calculated[j][i] = 1;
         
@@ -95,11 +110,6 @@ void *determineAverageAngularDistance( void *args )
         {
           max = distance;
         }
-        
-        pthread_mutex_lock(&mutex);
-        count++;
-        mean = mean + (distance-mean)/count;
-        pthread_mutex_unlock(&mutex);
       }
     }
   }
@@ -222,10 +232,10 @@ for( n = 1; n < argc; n++ )
   pthread_mutex_destroy(&mutex);
   free(thread_array);
 
+  printf("Count = %ld\n", count);
   printf("Average distance found is %lf\n", mean );
   printf("Minimum distance found is %lf\n", min );
   printf("Maximum distance found is %lf\n", max );
 
   return 0;
 }
-
